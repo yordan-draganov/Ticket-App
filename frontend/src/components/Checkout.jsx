@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import apiService from "../services/apiService";
 import "../css/Checkout.css";
 
 export default function Checkout() {
@@ -9,31 +10,62 @@ export default function Checkout() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve selected event from sessionStorage
     const eventData = sessionStorage.getItem('selectedEvent');
     if (eventData) {
       setSelectedEvent(JSON.parse(eventData));
+    } else {
+      navigate('/');
     }
-  }, []);
+  }, [navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Payment successful! Your tickets have been sent to your email.");
-    // Clear the form and sessionStorage
-    setCardNumber("");
-    setExpiry("");
-    setCvv("");
-    setName("");
-    sessionStorage.removeItem('selectedEvent');
-    // Redirect to home page
-    navigate('/');
+    
+    if (!apiService.isLoggedIn()) {
+      navigate('/login');
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const paymentDetails = {
+        cardNumber: cardNumber.replace(/\s/g, ''), 
+        expiry,
+        cvv,
+        name
+      };
+
+      const response = await apiService.purchaseTickets(
+        selectedEvent.id,
+        quantity,
+        paymentDetails
+      );
+
+      alert(`Payment successful! Your ${quantity} ticket(s) have been purchased. Ticket ID: ${response.ticket.id}`);
+      
+      setCardNumber("");
+      setExpiry("");
+      setCvv("");
+      setName("");
+      sessionStorage.removeItem('selectedEvent');
+      
+      navigate('/my-tickets');
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      setError(error.message || 'Purchase failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatCardNumber = (value) => {
-    // Format the card number with spaces every 4 digits
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
     const match = matches && matches[0] || '';
@@ -51,7 +83,6 @@ export default function Checkout() {
   };
 
   const formatExpiry = (value) => {
-    // Format expiry date as MM/YY
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     if (v.length >= 2) {
       return v.slice(0, 2) + (v.length > 2 ? '/' + v.slice(2, 4) : '');
@@ -64,6 +95,20 @@ export default function Checkout() {
     const price = parseFloat(selectedEvent.price.replace('$', ''));
     return (price * quantity).toFixed(2);
   };
+
+  if (!apiService.isLoggedIn()) {
+    return (
+      <div className="checkout-container">
+        <div className="login-required">
+          <h3>Login Required</h3>
+          <p>You need to be logged in to purchase tickets.</p>
+          <button onClick={() => navigate('/login')} className="login-btn">
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="checkout-container">
@@ -88,6 +133,7 @@ export default function Checkout() {
                       type="button" 
                       onClick={() => quantity > 1 && setQuantity(quantity - 1)}
                       className="quantity-btn"
+                      disabled={loading}
                     >
                       -
                     </button>
@@ -96,6 +142,7 @@ export default function Checkout() {
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
                       className="quantity-btn"
+                      disabled={loading}
                     >
                       +
                     </button>
@@ -109,18 +156,46 @@ export default function Checkout() {
                   <span className="total-label">Total:</span>
                   <span className="total-value">${calculateTotal()}</span>
                 </div>
+                {selectedEvent.availableTickets && selectedEvent.availableTickets < quantity && (
+                  <div className="availability-warning" style={{
+                    color: '#dc3545',
+                    fontSize: '14px',
+                    marginTop: '10px',
+                    padding: '10px',
+                    backgroundColor: '#f8d7da',
+                    borderRadius: '5px'
+                  }}>
+                    ⚠️ Only {selectedEvent.availableTickets} tickets available
+                  </div>
+                )}
               </div>
             </div>
           </div>
           
           <form className="checkout-form" onSubmit={handleSubmit}>
             <h2>Payment Details</h2>
+            
+            {error && (
+              <div className="error-message" style={{
+                color: '#dc3545',
+                backgroundColor: '#f8d7da',
+                border: '1px solid #f5c6cb',
+                borderRadius: '4px',
+                padding: '10px',
+                marginBottom: '15px',
+                fontSize: '14px'
+              }}>
+                {error}
+              </div>
+            )}
+            
             <input
               type="text"
               placeholder="Cardholder Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={loading}
             />
             <input
               type="text"
@@ -129,6 +204,7 @@ export default function Checkout() {
               onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
               maxLength="19"
               required
+              disabled={loading}
             />
             <div className="card-details">
               <input
@@ -139,6 +215,7 @@ export default function Checkout() {
                 maxLength="5"
                 required
                 className="expiry-input"
+                disabled={loading}
               />
               <input
                 type="text"
@@ -148,9 +225,12 @@ export default function Checkout() {
                 maxLength="3"
                 required
                 className="cvv-input"
+                disabled={loading}
               />
             </div>
-            <button type="submit">Complete Purchase</button>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Processing...' : 'Complete Purchase'}
+            </button>
           </form>
         </div>
       ) : (
