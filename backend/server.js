@@ -2,6 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const setupSwagger = require('./swagger'); 
+
+
+const app = express();
+setupSwagger(app); 
+
 
 const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/events');
@@ -9,7 +15,6 @@ const ticketRoutes = require('./routes/tickets');
 
 const pool = require('./config/database');
 
-const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
