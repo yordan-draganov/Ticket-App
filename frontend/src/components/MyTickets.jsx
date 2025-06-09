@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
 import '../css/Mytickets.css';
+import bannerImage from '../assets/test.png';
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -162,7 +163,11 @@ Please present this ticket at the venue
         {tickets.map(ticket => (
           <div key={ticket.id} className="ticket-card">
             <div className="ticket-image">
-              <img src={ticket.image} alt={ticket.eventTitle} />
+              <img 
+                src={bannerImage} 
+                alt={ticket.eventTitle} 
+                className="ticket-banner-image"
+              />
             </div>
             <div className="ticket-content">
               <div className="ticket-header">

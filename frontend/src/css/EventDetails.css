@@ -15,8 +15,14 @@
 
 .event-banner {
   width: 100%;
-  height: 300px;
+  height: 400px;
   object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.event-banner:hover {
+  transform: scale(1.02);
 }
 
 .event-header-content {
@@ -39,6 +45,7 @@
   font-weight: bold;
   display: inline-block;
   margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .event-header-content h1 {
@@ -58,6 +65,7 @@
   display: flex;
   align-items: center;
   font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .icon {
@@ -102,6 +110,21 @@
   gap: 1.5rem;
 }
 
+.ticket-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.ticket-card h3 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .ticket-price {
   margin-bottom: 1.5rem;
 }
@@ -123,16 +146,31 @@
   background: #007bff;
   color: white;
   border: none;
-  padding: 0.8rem;
+  padding: 1rem;
   border-radius: 8px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .buy-ticket-button:hover {
   background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.buy-ticket-button.sold-out {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.buy-ticket-button.sold-out:hover {
+  background: #6c757d;
+  transform: none;
+  box-shadow: none;
 }
 
 .loading-container {
@@ -182,4 +220,23 @@
 
 .back-button:hover {
   background: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .event-banner {
+    height: 300px;
+  }
+  
+  .event-header-content {
+    padding: 1.5rem;
+  }
+  
+  .event-header-content h1 {
+    font-size: 1.8rem;
+  }
+  
+  .event-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }

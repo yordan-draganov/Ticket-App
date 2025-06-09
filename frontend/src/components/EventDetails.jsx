@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import apiService from "../services/apiService";
 import "../css/EventDetails.css";
+import bannerImage from "../assets/test.png";
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -119,7 +120,11 @@ export default function EventDetails() {
   return (
     <div className="event-details-container">
       <div className="event-header">
-        <img src={event.image} alt={event.title} className="event-banner" />
+        <img 
+          src={bannerImage} 
+          alt={event.title} 
+          className="event-banner" 
+        />
         <div className="event-header-content">
           <span className="event-category-badge">{event.category}</span>
           <h1>{event.title}</h1>

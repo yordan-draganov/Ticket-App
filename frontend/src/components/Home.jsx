@@ -4,6 +4,9 @@ import apiService from "../services/apiService";
 import "../css/Home.css";
 import SearchBar from "./SearchBar";
 
+import bannerImage from "../assets/test.png";
+
+
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -174,7 +177,11 @@ export default function Home() {
           {events.map((event) => (
             <div key={event.id} className="event-card">
               <div className="event-image">
-                <img src={event.image} alt={event.title} />
+                <img 
+                  src={bannerImage} 
+                  alt="Event Banner" 
+                  style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '10px', marginBottom: '20px' }}
+                />
                 <span className="event-category">{event.category}</span>
               </div>
               <h2 className="event-title">{event.title}</h2>

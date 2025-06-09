@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import apiService from "../services/apiService";
 import "../css/Checkout.css";
+import bannerImage from "../assets/test.png";
 
 export default function Checkout() {
   const [cardNumber, setCardNumber] = useState("");
@@ -118,7 +119,7 @@ export default function Checkout() {
             <h3>Order Summary</h3>
             <div className="event-info-checkout">
               <img 
-                src={selectedEvent.image} 
+                src={bannerImage} 
                 alt={selectedEvent.title} 
                 className="event-thumbnail" 
               />
