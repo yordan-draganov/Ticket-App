@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../css/Navbar.css";
+import "../css/NavBar.css";
 
 export default function Navbar({ isLoggedIn, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

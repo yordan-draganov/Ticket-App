@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
-import '../css/MyTickets.css';
+import '../css/Mytickets.css';
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
