@@ -5,27 +5,34 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: db_user
-      POSTGRES_PASSWORD: db_pass
+      POSTGRES_USER: your_user
+      POSTGRES_PASSWORD: your_pass
       POSTGRES_DB: ticketing_db
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
       context: ./backend
+    env_file:
+      - ./backend/.env
     environment:
       DB_HOST: postgres
-      POSTGRES_USER: db_user
-      POSTGRES_PASSWORD: db_pass
-      DB_NAME: ticketing_db
+      DB_PORT: 5432
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "5000:5000"
-
+    restart: unless-stopped
 
   frontend:
     build:
@@ -34,6 +41,8 @@ services:
     restart: always
     ports:
       - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
 
 volumes:
   pgdata:
