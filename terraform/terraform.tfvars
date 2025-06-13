@@ -1,0 +1,13 @@
+app_name    = "ticketing-app"
+environment = "dev"
+
+frontend_port = 3000
+backend_port  = 5000
+db_port       = 5433
+
+db_name     = "ticketing_db"
+db_user     = "your_user"
+db_password = "your_pass"
+jwt_secret  = "your-secret-key"
+
+auto_rebuild = true
