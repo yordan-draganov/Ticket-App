@@ -36,25 +36,6 @@ export default function EventDetails() {
     }
   };
 
-  const handleShare = (platform) => {
-    const url = window.location.href;
-    const title = event?.title || 'Check out this event!';
-    
-    switch (platform) {
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-        break;
-      case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
-        break;
-      case 'email':
-        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`Check out this event: ${url}`)}`;
-        break;
-      default:
-        break;
-    }
-  };
-
   if (loading) {
     return (
       <div className="loading-container" style={{
